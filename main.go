@@ -46,7 +46,9 @@ func ListPods(clientset *kubernetes.Clientset, Namespace string){
 	}
 
 	for _, pod := range podList.Items{
-		fmt.Printf("Pod Name: %s\n", pod.Name)
+		fmt.Println("Pod Name: ", pod.Name)
+		fmt.Println("Pod Image: ", pod.Spec.Containers[0].Image)
+		fmt.Println()
 	}
 }
 
@@ -70,19 +72,38 @@ func CreatePod(clientset *kubernetes.Clientset, PodName string, ImageName string
 		panic(err.Error())
 	}
 
-	fmt.Printf("Created pod: %s\n", createPod.Name)
+	fmt.Printf("Created pod: %s\n\n", createPod.Name)
+}
+
+func UpdatePod(clientset *kubernetes.Clientset, podname string, newimage string, namespace string){
+	pod, err := clientset.CoreV1().Pods(namespace).Get(context.TODO(), podname, metav1.GetOptions{})
+	if err != nil{
+		panic(err.Error())
+	}
+
+	pod.Spec.Containers[0].Image = newimage
+
+	Updatedpod, err := clientset.CoreV1().Pods(namespace).Update(context.TODO(), pod, metav1.UpdateOptions{})
+	if err != nil{
+		panic(err.Error())
+	}
+
+	fmt.Printf("updatd pod: %s\n\n", Updatedpod.Name)
 }
 
 func main(){
 	namespace := "default"
 	podName := "nginx-1"
 	imageName := "nginx"
+	newImageName := "nginx:1.21"
 
 	config := CreateK8sClientConfig()
 	clientset := CreateK8sClientset(config)
 
 	ListPods(clientset, namespace)
 	CreatePod(clientset, podName, imageName, namespace) 
+	ListPods(clientset, namespace)
+	UpdatePod(clientset, podName, newImageName, namespace)
 	ListPods(clientset, namespace)
 
 }
