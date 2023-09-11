@@ -38,3 +38,7 @@ some links to understand operators:
 - https://github.com/DirectXMan12/kubebuilder-workshops/blob/kubecon-us-2019/api/v1/guestbook_types.go
 - https://book-v1.book.kubebuilder.io/getting_started/installation_and_setup.html
 - https://www.sobyte.net/post/2022-08/go-k8s-operators-part1/
+
+
+to communicate with k8s usig golang we need to download go-client for k8s
+>go get k8s.io/client-go@latest
