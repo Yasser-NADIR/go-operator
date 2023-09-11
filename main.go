@@ -11,6 +11,7 @@ import (
 	"k8s.io/client-go/util/homedir"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1 "k8s.io/api/core/v1"
 )
 
 
@@ -45,13 +46,43 @@ func ListPods(clientset *kubernetes.Clientset, Namespace string){
 	}
 
 	for _, pod := range podList.Items{
-		//fmt.Printf("Pod Name: %s\n", pod.Name)
-		fmt.Println(pod)
+		fmt.Printf("Pod Name: %s\n", pod.Name)
 	}
 }
 
+func CreatePod(clientset *kubernetes.Clientset, PodName string, ImageName string, Namespace string){
+	pod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: PodName,
+		},
+		Spec: corev1.PodSpec{
+			Containers: []corev1.Container{
+				{
+					Name: PodName,
+					Image: ImageName,
+				},
+			},
+		},
+	}
+
+	createPod, err := clientset.CoreV1().Pods(Namespace).Create(context.TODO(), pod, metav1.CreateOptions{})
+	if err != nil{
+		panic(err.Error())
+	}
+
+	fmt.Printf("Created pod: %s\n", createPod.Name)
+}
+
 func main(){
+	namespace := "default"
+	podName := "nginx-1"
+	imageName := "nginx"
+
 	config := CreateK8sClientConfig()
 	clientset := CreateK8sClientset(config)
-	ListPods(clientset, "default")
+
+	ListPods(clientset, namespace)
+	CreatePod(clientset, podName, imageName, namespace) 
+	ListPods(clientset, namespace)
+
 }
