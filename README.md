@@ -43,3 +43,4 @@ some links to understand operators:
 to communicate with k8s usig golang we need to download go-client for k8s
 >go get k8s.io/client-go@latest
 >go get k8s.io/client-go/tools/clientcmd@v0.28.1
+>go get k8s.io/client-go/discovery@v0.28.1
