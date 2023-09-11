@@ -29,3 +29,12 @@ after we try each part, now we will try to combine both of them:
 - create functions to insert CRD into k8s
 - create function to create controller manager
 - create function to build and run controller manager
+
+some links to understand operators:
+
+- https://www.youtube.com/watch?v=8Ex7ybi273g&ab_channel=VMware%7Bcode%7D
+- https://www.youtube.com/watch?v=KBTXBUVNF2I&ab_channel=CNCF%5BCloudNativeComputingFoundation%5D
+- https://pres.metamagical.dev/kubecon-us-2019/#slide-22
+- https://github.com/DirectXMan12/kubebuilder-workshops/blob/kubecon-us-2019/api/v1/guestbook_types.go
+- https://book-v1.book.kubebuilder.io/getting_started/installation_and_setup.html
+- https://www.sobyte.net/post/2022-08/go-k8s-operators-part1/
