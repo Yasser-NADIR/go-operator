@@ -112,6 +112,8 @@ func main(){
 	ListPods(clientset, namespace)
 	CreatePod(clientset, podName, imageName, namespace) 
 	ListPods(clientset, namespace)
+	//in updated function an error will appear because the pod didn't complite its creation
+	//in future steps I should fix it
 	UpdatePod(clientset, podName, newImageName, namespace)
 	ListPods(clientset, namespace)
 	DeletePod(clientset, podName, namespace) 
