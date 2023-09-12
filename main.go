@@ -91,6 +91,15 @@ func UpdatePod(clientset *kubernetes.Clientset, podname string, newimage string,
 	fmt.Printf("updatd pod: %s\n\n", Updatedpod.Name)
 }
 
+func DeletePod(clientset *kubernetes.Clientset, podname string, namespace string){
+	err := clientset.CoreV1().Pods(namespace).Delete(context.TODO(), podname, metav1.DeleteOptions{})
+	if err != nil{
+		panic(err.Error())
+	}
+
+	fmt.Printf("Deleted Pod: %s\n", podname)
+}
+
 func main(){
 	namespace := "default"
 	podName := "nginx-1"
@@ -105,5 +114,9 @@ func main(){
 	ListPods(clientset, namespace)
 	UpdatePod(clientset, podName, newImageName, namespace)
 	ListPods(clientset, namespace)
-
+	DeletePod(clientset, podName, namespace) 
+	//here after deleting pod the list pod will show the the pod didn't delete
+	//it because the state of deleted pod didn't change in etcd
+	//after we checked using kubectl we found that the pod deleted
+	ListPods(clientset, namespace)
 }
