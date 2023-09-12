@@ -52,6 +52,14 @@ func ListPods(clientset *kubernetes.Clientset, Namespace string){
 	}
 }
 
+func GetPodByName(clientset *kubernetes.Clientset, podname string, namespace string) (*corev1.Pod){
+	pod, err := clientset.CoreV1().Pods(namespace).Get(context.TODO(), podname, metav1.GetOptions{})
+	if err != nil{
+		panic(err.Error())
+	}
+	return pod
+}
+
 func CreatePod(clientset *kubernetes.Clientset, PodName string, ImageName string, Namespace string){
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
@@ -76,10 +84,7 @@ func CreatePod(clientset *kubernetes.Clientset, PodName string, ImageName string
 }
 
 func UpdatePod(clientset *kubernetes.Clientset, podname string, newimage string, namespace string){
-	pod, err := clientset.CoreV1().Pods(namespace).Get(context.TODO(), podname, metav1.GetOptions{})
-	if err != nil{
-		panic(err.Error())
-	}
+	pod := GetPodByName(clientset, podname, namespace)
 
 	pod.Spec.Containers[0].Image = newimage
 
@@ -99,6 +104,7 @@ func DeletePod(clientset *kubernetes.Clientset, podname string, namespace string
 
 	fmt.Printf("Deleted Pod: %s\n", podname)
 }
+
 
 func main(){
 	namespace := "default"
