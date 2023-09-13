@@ -60,6 +60,10 @@ func GetPodByName(clientset *kubernetes.Clientset, podname string, namespace str
 	return pod
 }
 
+func IsPodInitialized(pod *corev1.Pod) bool{
+	return len(pod.Status.Conditions)>0 && pod.Status.Conditions[0].Type == "Initialized"
+}
+
 func CreatePod(clientset *kubernetes.Clientset, PodName string, ImageName string, Namespace string){
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
@@ -84,7 +88,15 @@ func CreatePod(clientset *kubernetes.Clientset, PodName string, ImageName string
 }
 
 func UpdatePod(clientset *kubernetes.Clientset, podname string, newimage string, namespace string){
-	pod := GetPodByName(clientset, podname, namespace)
+	var pod *corev1.Pod
+	
+	for {
+		pod = GetPodByName(clientset, podname, namespace)
+		if IsPodInitialized(pod){
+			break
+		}
+		fmt.Println("waiting for the pod to be initialized ...")
+	}
 
 	pod.Spec.Containers[0].Image = newimage
 
@@ -118,13 +130,11 @@ func main(){
 	ListPods(clientset, namespace)
 	CreatePod(clientset, podName, imageName, namespace) 
 	ListPods(clientset, namespace)
-	//in updated function an error will appear because the pod didn't complite its creation
-	//in future steps I should fix it
 	UpdatePod(clientset, podName, newImageName, namespace)
-	ListPods(clientset, namespace)
-	DeletePod(clientset, podName, namespace) 
+	// ListPods(clientset, namespace)
+	// DeletePod(clientset, podName, namespace) 
 	//here after deleting pod the list pod will show the the pod didn't delete
 	//it because the state of deleted pod didn't change in etcd
 	//after we checked using kubectl we found that the pod deleted
-	ListPods(clientset, namespace)
+	// ListPods(clientset, namespace)
 }
